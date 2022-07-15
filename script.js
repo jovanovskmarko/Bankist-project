@@ -78,9 +78,16 @@ const movements = [200, 450, -400, 3000, -650, -130, 70, 1300];
 //CODING CHALLENGE
 
 //display functions
-const displayMovements = function (userLoggedIn) {
+
+const displayMovements = function (userLoggedIn, sort = false) {
   const movements = userLoggedIn.movements;
-  movements.forEach(function (mov, i) {
+
+  const movs = movements.slice().sort(function (a, b) {
+    if (sort) return a - b;
+    else return movements;
+  });
+
+  movs.forEach(function (mov, i) {
     let type = '';
     if (mov > 0) {
       type = 'deposit';
@@ -112,6 +119,11 @@ const displayBalance = function (userLoggedIn) {
   userLoggedIn.balance = Number(labelBalance.textContent);
 };
 
+const updateUI = function (user) {
+  displayMovements(user, false);
+  displayBalance(user);
+};
+
 //login event
 let userLoggedIn;
 btnLogin.addEventListener('click', function (e) {
@@ -132,9 +144,10 @@ btnLogin.addEventListener('click', function (e) {
 
   containerMovements.innerHTML = '';
 
-  displayMovements(userLoggedIn);
-  displayBalance(userLoggedIn);
+  updateUI(userLoggedIn);
 });
+
+//transfer event
 
 btnTransfer.addEventListener('click', function (e) {
   e.preventDefault();
@@ -156,6 +169,7 @@ btnTransfer.addEventListener('click', function (e) {
   inputTransferAmount.value = inputTransferTo.value = '';
 });
 
+//loan event
 btnLoan.addEventListener('click', function (e) {
   e.preventDefault();
   const amount = inputLoanAmount.value;
@@ -166,12 +180,12 @@ btnLoan.addEventListener('click', function (e) {
     })
   ) {
     userLoggedIn.movements.push(amount);
-    displayMovements(userLoggedIn);
-    displayBalance(userLoggedIn);
-    inputLoanAmount = '';
+    updateUI(userLoggedIn);
+    inputLoanAmount.value = '';
   }
 });
 
+//close event
 btnClose.addEventListener('click', function (e) {
   e.preventDefault();
   if (
@@ -186,4 +200,12 @@ btnClose.addEventListener('click', function (e) {
     inputClosePin.value = inputCloseUsername.value = '';
     containerApp.style.opacity = 0;
   }
+});
+
+//sorting movements
+let sorted = false;
+btnSort.addEventListener('click', function (e) {
+  e.preventDefault();
+  displayMovements(userLoggedIn, !sorted);
+  sorted = !sorted;
 });
