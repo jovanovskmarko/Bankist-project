@@ -6,7 +6,7 @@
 
 // Data
 const account1 = {
-  owner: 'Jonas Schmedtmann',
+  owner: 'js',
   movements: [200, 450, -400, 3000, -650, -130, 70, 1300],
   interestRate: 1.2, // %
   pin: 1111,
@@ -108,14 +108,16 @@ const displayBalance = function (userLoggedIn) {
   ) {
     return acu + curr;
   });
+
+  userLoggedIn.balance = Number(labelBalance.textContent);
 };
 
 //login event
+let userLoggedIn;
 btnLogin.addEventListener('click', function (e) {
   e.preventDefault();
   const username = inputLoginUsername.value;
   const pin = inputLoginPin.value;
-  let userLoggedIn;
 
   userLoggedIn = accounts.find(function (curr) {
     return curr.owner === username;
@@ -132,4 +134,41 @@ btnLogin.addEventListener('click', function (e) {
 
   displayMovements(userLoggedIn);
   displayBalance(userLoggedIn);
+});
+
+btnTransfer.addEventListener('click', function (e) {
+  e.preventDefault();
+  const receiverAcc = accounts.find(function (acc) {
+    return acc.owner === inputTransferTo.value;
+  });
+  const amount = Number(inputTransferAmount.value);
+
+  if (
+    amount > 0 &&
+    userLoggedIn.balance >= amount &&
+    receiverAcc?.owner !== userLoggedIn.owner &&
+    receiverAcc
+  ) {
+    userLoggedIn.movements.push(0 - amount);
+    receiverAcc.movements.push(amount);
+  }
+
+  inputTransferAmount.value = inputTransferTo.value = '';
+});
+
+btnClose.addEventListener('click', function (e) {
+  e.preventDefault();
+  if (
+    inputClosePin.value === userLoggedIn.pin.toString() &&
+    inputCloseUsername.value === userLoggedIn.owner
+  ) {
+    let index = accounts.findIndex(function (acc) {
+      return acc.owner === userLoggedIn.owner;
+    });
+
+    accounts.splice(index, 1);
+    inputClosePin.value = inputCloseUsername.value = '';
+    containerApp.style.opacity = 0;
+  }
+  console.log(accounts);
 });
