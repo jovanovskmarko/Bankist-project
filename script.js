@@ -106,7 +106,7 @@ const displayBalance = function (userLoggedIn) {
     acu,
     curr
   ) {
-    return acu + curr;
+    return Number(acu) + Number(curr);
   });
 
   userLoggedIn.balance = Number(labelBalance.textContent);
@@ -156,6 +156,22 @@ btnTransfer.addEventListener('click', function (e) {
   inputTransferAmount.value = inputTransferTo.value = '';
 });
 
+btnLoan.addEventListener('click', function (e) {
+  e.preventDefault();
+  const amount = inputLoanAmount.value;
+  if (
+    amount > 0 &&
+    userLoggedIn.movements.some(function (mov) {
+      return mov >= amount * 0.1;
+    })
+  ) {
+    userLoggedIn.movements.push(amount);
+    displayMovements(userLoggedIn);
+    displayBalance(userLoggedIn);
+    inputLoanAmount = '';
+  }
+});
+
 btnClose.addEventListener('click', function (e) {
   e.preventDefault();
   if (
@@ -170,5 +186,4 @@ btnClose.addEventListener('click', function (e) {
     inputClosePin.value = inputCloseUsername.value = '';
     containerApp.style.opacity = 0;
   }
-  console.log(accounts);
 });
