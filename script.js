@@ -161,12 +161,35 @@ const updateUI = function (user) {
   displayBalance(user);
 };
 
+//timer function
+let time;
+let timer;
+
+const resetTime = function () {
+  time = 20;
+};
+
+const setTimerLogout = function () {
+  timer = setInterval(function () {
+    const min = String(Math.trunc(time / 60)).padStart(2, 0);
+    const sec = String(time % 60).padStart(2, 0);
+    labelTimer.textContent = `${min}:${sec}`;
+    if (time === 0) {
+      clearInterval(timer);
+      containerApp.style.opacity = 0;
+      labelWelcome.textContent = 'Log in to get started';
+    }
+    time--;
+  }, 1000);
+};
+
 //login event
 
 btnLogin.addEventListener('click', function (e) {
   e.preventDefault();
   const username = inputLoginUsername.value;
   const pin = inputLoginPin.value;
+  resetTime();
 
   userLoggedIn = accounts.find(function (curr) {
     return curr.owner === username;
@@ -177,6 +200,8 @@ btnLogin.addEventListener('click', function (e) {
     labelWelcome.textContent = `Welcome ${userLoggedIn.owner.split(' ')[0]}`;
     containerApp.style.opacity = 100;
     containerMovements.innerHTML = '';
+    clearInterval(timer);
+    setTimerLogout();
     updateUI(userLoggedIn);
   }
   const now = new Date();
@@ -190,6 +215,7 @@ btnLogin.addEventListener('click', function (e) {
 
 btnTransfer.addEventListener('click', function (e) {
   e.preventDefault();
+  resetTime();
   const receiverAcc = accounts.find(function (acc) {
     return acc.owner === inputTransferTo.value;
   });
@@ -213,6 +239,7 @@ btnTransfer.addEventListener('click', function (e) {
 //loan event
 btnLoan.addEventListener('click', function (e) {
   e.preventDefault();
+  resetTime();
   const amount = inputLoanAmount.value;
   if (
     amount > 0 &&
@@ -253,11 +280,6 @@ btnSort.addEventListener('click', function (e) {
   displayMovements(userLoggedIn, !sorted);
   sorted = !sorted;
 });
-
-//FAKING LOG IN
-userLoggedIn = account1;
-updateUI(userLoggedIn);
-containerApp.style.opacity = 100;
 
 const options = {
   year: 'numeric',
