@@ -21,7 +21,12 @@ const account1 = {
     '2022-07-18T10:51:36.790Z',
   ],
   currency: 'EUR',
-  locale: 'pt-PT', // de-DE
+  locale: 'pt-PT',
+  options: {
+    year: 'numeric',
+    day: 'numeric',
+    month: 'numeric',
+  }, // de-DE
 };
 
 const account2 = {
@@ -41,6 +46,11 @@ const account2 = {
   ],
   currency: 'USD',
   locale: 'en-US',
+  options: {
+    year: 'numeric',
+    day: 'numeric',
+    month: 'numeric',
+  },
 };
 
 const accounts = [account1, account2];
@@ -88,21 +98,18 @@ const movements = [200, 450, -400, 3000, -650, -130, 70, 1300];
 //CODING CHALLENGE
 
 //display functions
-const formatMovementDate = function (date) {
+const formatMovementDate = function (date, locale) {
   const calcDaysPassed = function (date1, date2) {
     return Math.round(Math.abs(date2 - date1) / (1000 * 60 * 60 * 24));
   };
 
   const daysPassed = calcDaysPassed(new Date(), date);
 
-  const year = `${date.getFullYear()}`.padStart(2, 0);
-  const month = `${date.getMonth() + 1}`.padStart(2, 0);
-  const day = date.getDate();
-  console.log(daysPassed);
   if (daysPassed === 0) return 'Today';
   else if (daysPassed === 1) return 'Yesterday';
   else if (daysPassed <= 7) return `${daysPassed} days ago`;
-  else return `${day}/${month}/${year}`;
+  else
+    return new Intl.DateTimeFormat(locale, userLoggedIn.options).format(date);
 };
 
 let userLoggedIn;
@@ -116,7 +123,7 @@ const displayMovements = function (userLoggedIn, sort = false) {
   containerMovements.textContent = '';
   movs.forEach(function (mov, i) {
     const date = new Date(userLoggedIn.movementsDates[i]);
-    const displayDate = formatMovementDate(date);
+    const displayDate = formatMovementDate(date, userLoggedIn.locale);
 
     let type = '';
     if (mov > 0) {
@@ -172,6 +179,11 @@ btnLogin.addEventListener('click', function (e) {
     containerMovements.innerHTML = '';
     updateUI(userLoggedIn);
   }
+  const now = new Date();
+  const novo = new Intl.DateTimeFormat(userLoggedIn.locale, options).format(
+    now
+  );
+  labelDate.textContent = novo;
 });
 
 //transfer event
@@ -245,11 +257,10 @@ userLoggedIn = account1;
 updateUI(userLoggedIn);
 containerApp.style.opacity = 100;
 
-const now = new Date();
-const year = `${now.getFullYear()}`.padStart(2, 0);
-const month = `${now.getMonth() + 1}`.padStart(2, 0);
-const day = now.getDate();
-const hour = now.getHours();
-const min = now.getMinutes();
-
-labelDate.textContent = `${day}/${month}/${year}, ${hour}:${min}`;
+const options = {
+  year: 'numeric',
+  day: 'numeric',
+  month: 'numeric',
+  hour: 'numeric',
+  minute: 'numeric',
+};
