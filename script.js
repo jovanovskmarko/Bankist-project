@@ -16,9 +16,9 @@ const account1 = {
     '2020-01-28T09:15:04.904Z',
     '2020-04-01T10:17:24.185Z',
     '2020-05-08T14:11:59.604Z',
-    '2020-05-27T17:01:17.194Z',
-    '2020-07-11T23:36:17.929Z',
-    '2020-07-12T10:51:36.790Z',
+    '2022-07-17T17:01:17.194Z',
+    '2022-07-14T23:36:17.929Z',
+    '2022-07-18T10:51:36.790Z',
   ],
   currency: 'EUR',
   locale: 'pt-PT', // de-DE
@@ -88,6 +88,23 @@ const movements = [200, 450, -400, 3000, -650, -130, 70, 1300];
 //CODING CHALLENGE
 
 //display functions
+const formatMovementDate = function (date) {
+  const calcDaysPassed = function (date1, date2) {
+    return Math.round(Math.abs(date2 - date1) / (1000 * 60 * 60 * 24));
+  };
+
+  const daysPassed = calcDaysPassed(new Date(), date);
+
+  const year = `${date.getFullYear()}`.padStart(2, 0);
+  const month = `${date.getMonth() + 1}`.padStart(2, 0);
+  const day = date.getDate();
+  console.log(daysPassed);
+  if (daysPassed === 0) return 'Today';
+  else if (daysPassed === 1) return 'Yesterday';
+  else if (daysPassed <= 7) return `${daysPassed} days ago`;
+  else return `${day}/${month}/${year}`;
+};
+
 let userLoggedIn;
 const displayMovements = function (userLoggedIn, sort = false) {
   const movements = userLoggedIn.movements;
@@ -99,10 +116,8 @@ const displayMovements = function (userLoggedIn, sort = false) {
   containerMovements.textContent = '';
   movs.forEach(function (mov, i) {
     const date = new Date(userLoggedIn.movementsDates[i]);
-    const year = `${date.getFullYear()}`.padStart(2, 0);
-    const month = `${date.getMonth() + 1}`.padStart(2, 0);
-    const day = date.getDate();
-    const displayDate = `${day}/${month}/${year}`;
+    const displayDate = formatMovementDate(date);
+
     let type = '';
     if (mov > 0) {
       type = 'deposit';
@@ -226,6 +241,9 @@ btnSort.addEventListener('click', function (e) {
 });
 
 //FAKING LOG IN
+userLoggedIn = account1;
+updateUI(userLoggedIn);
+containerApp.style.opacity = 100;
 
 const now = new Date();
 const year = `${now.getFullYear()}`.padStart(2, 0);
