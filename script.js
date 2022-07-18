@@ -220,11 +220,13 @@ btnLoan.addEventListener('click', function (e) {
       return mov >= amount * 0.1;
     })
   ) {
-    userLoggedIn.movements.push(amount);
-    userLoggedIn.movementsDates.push(new Date().toISOString());
-    updateUI(userLoggedIn);
-    inputLoanAmount.value = '';
+    setTimeout(function () {
+      userLoggedIn.movements.push(amount);
+      userLoggedIn.movementsDates.push(new Date().toISOString());
+      updateUI(userLoggedIn);
+    }, 5000);
   }
+  inputLoanAmount.value = '';
 });
 
 //close event
